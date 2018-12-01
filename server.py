@@ -1,18 +1,15 @@
 #!/usr/bin/env python
-from os import getcwd
-from os.path import join
-
+import os
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
-
-from tornado.options import define, options
 from jinja2 import Environment, FileSystemLoader
 from momoko import Pool
+from os import getcwd
+from os.path import join
+from tornado.options import define, options
 
 from settings.routes import routes
-from settings import DB_PSQL_DSN
-
 
 define('port', default=8080, help='run on the given port', type=int)
 define('debug', default=True, help='debug mode', type=bool)
@@ -36,7 +33,7 @@ class Application(tornado.web.Application):
 
         # PostgreSQL database connection
         ioloop_psql = tornado.ioloop.IOLoop.instance()
-        self.db = Pool(dsn=DB_PSQL_DSN, size=1, ioloop=ioloop_psql)
+        self.db = Pool(dsn=os.environ["DATABASE_URL"], size=1, ioloop=ioloop_psql)
         future_psql = self.db.connect()
         ioloop_psql.add_future(future_psql, lambda f: ioloop_psql.stop())
         ioloop_psql.start()
@@ -46,5 +43,5 @@ class Application(tornado.web.Application):
 if __name__ == '__main__':
     options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
+    http_server.listen(os.environ["PORT"])
     tornado.ioloop.IOLoop.instance().start()
