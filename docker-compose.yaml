@@ -1,0 +1,15 @@
+version: "3"
+services:
+  db:
+    image: postgres:10.4-alpine
+    container_name: two_lands-test-db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db_data/lib/postgresql:/var/lib/postgresql
+      - ./db_data/log/postgresql:/var/log/postgresql
+      - ./db_data/etc/postgresql:/etc/postgresql
+    environment:
+      POSTGRES_USER: tl
+      POSTGRES_PASSWORD: tl
+      POSTGRES_DB: tl

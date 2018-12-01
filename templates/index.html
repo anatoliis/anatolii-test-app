@@ -1,0 +1,119 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    <title>Proflie page</title>
+{% endblock title %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row main main-container">
+            {{ test_param }}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="main-header">
+                        {{ user['name'] }} <small style="color:#8e8e8e;">(@{{ user['login'] }})</small>
+                    </h3>
+                    <span class="add-header">
+                        Connections: <span id="connections">{{ conn_count }}</span>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    {% if status == 'connected' %}
+                        <div class="alert alert-success" role="alert">
+                            You are connected to this user.
+                            <button type="button" class="btn btn-xs btn-danger">Remove</button>
+                        </div>
+                    {% elif status == 'received' %}
+                        <div class="alert alert-info" role="alert">
+                            This user sent you an invitation.
+                            <button type="button" class="btn btn-xs btn-primary">Accept</button>
+                            <button type="button" class="btn btn-xs btn-danger">Remove</button>
+                        </div>
+                    {% elif status == 'sent' %}
+                        <div class="alert alert-warning" role="alert">
+                            You've sent an invitation to this user.
+                            <button type="button" class="btn btn-xs btn-danger">Revoke</button>
+                        </div>
+                    {% elif status == 'none' %}
+                        <div class="alert alert-warning" role="alert">
+                            You can send invitation to this user.
+                            <button type="button" class="btn btn-xs btn-success">Send</button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-success" role="alert">
+                            This is your profile.
+                        </div>
+                    {% endif %}
+
+                    {% if entries|length != 0 %}
+                        <label class="control-label">Connections list:</label>
+                        <table class="table table-bordered table-list">
+                            <thead>
+                            <tr>
+                                <th class="col-status">Status</th>
+                                <th>Login</th>
+                                <th>Name</th>
+                                <th class="col-actions">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody class="nodes">
+                            {% for user in entries %}
+                                <tr class="highlighted" id="{{ user['login'] }}" type="{{ user['type'] }}">
+                                    <td class="centered">
+                                        {% if user['type'] == 'in' %}
+                                            {% if status == 'own_page' %}
+                                                <button type="button" class="btn btn-xs btn-row btn-primary">Accept</button>
+                                            {% else %}
+                                                <span class="label label-primary">Received</span>
+                                            {% endif %}
+                                        {% elif user['type'] == 'out' %}
+                                            <span class="label label-default">Sent</span>
+                                        {% else %}
+                                            <span class="label label-success">Accepted</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="login" onclick="rowClick(this);">
+                                        <a href="/profile/{{ user['login'] }}">@{{ user['login'] }}</a>
+                                    </td>
+                                    <td class="username" onclick="rowClick(this);">{{ user['name'] }}</td>
+                                    <td class="centered">
+                                        {% if status == 'own_page' %}
+                                            {% if user['type'] == 'out' %}
+                                                <button type="button" class="btn btn-xs btn-row btn-warning">Revoke</button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-xs btn-row btn-danger">Remove</button>
+                                            {% endif %}
+                                        {% else %}
+                                            <button type="button" class="btn btn-xs btn-row btn-default">View</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% elif page_owner != current_user and not is_admin %}
+                        <div class="alert alert-warning" role="alert">
+                            You are not autorized to view this user's connections.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            This user doesn't have any connections yet.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="/static/js/profile.js"></script>
+    <script>
+        var pageOwner='{{ page_owner }}';
+        var currentUser='{{ current_user }}';
+        var currentPage='{{ current_page }}';
+    </script>
+{% endblock scripts %}

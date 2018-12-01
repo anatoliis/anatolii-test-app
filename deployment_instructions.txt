@@ -1,0 +1,15 @@
+1.  Required packages are listed in '/requirements.txt'
+2.  You have to set up PostgreSQL database connection info in '/settings/__init__.py'
+    like this:
+                DB_PSQL = { 'host': 'localhost', 'port': '5432', 'database': 'test_task021',
+                            'user': 'test_user029', 'password': 'test_pass038'}
+
+3.  Execute '/server.py', default port is set to 8080
+4.  Follow the link 'http:/localhost:8080/create' to create all required database tables and
+    50 users with some connections for testing. This route is used for testing only.
+5.  It's also possible to create required tables by running '/deployment/database.sql'.
+6.  p4 and p5 also creating an administrator with following info:
+        - login:    admin
+        - pass:     secret
+
+7.  Hope this helps. I really appreciate your attention.

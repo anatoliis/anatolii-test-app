@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    <title>Search page</title>
+{% endblock title %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row main main-container">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="main-header">Searching</h3>
+                        <span class="add-header">
+                            Total users registered: <span id="quantity">{{ users|length }}</span>
+                        </span>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" onsubmit="return false;">
+                        <input type="text" id="searchbox" onkeyup="onType(this);" class="form-control" placeholder="Search..." autocomplete="off">
+                    </form>
+                    <br>
+                    <label class="control-label">Results:</label>
+                    <table class="table table-bordered table-list">
+                        <thead>
+                        <tr>
+                            <th class="col-status">Status</th>
+                            <th>Login</th>
+                            <th>Name</th>
+                            <th class="col-actions">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody-entries">
+                        {% for user in users %}
+                            <tr class="highlighted entries" id="{{ user['login'] }}">
+                                <td class="col-status">
+                                    {% if user['type'] == 'accepted' %}
+                                        <span class="label label-success">Accepted</span>
+                                    {% elif user['type'] == 'in' %}
+                                        <button type="button" class="btn btn-xs btn-row btn-primary">Accept</button>
+                                    {% elif user['type'] == 'out' %}
+                                        <span class="label label-warning">Sent</span>
+                                    {% else %}
+                                        <span class="label label-info">None</span>
+                                    {% endif %}
+                                </td>
+                                <td class="login" onclick="rowClick(this);">
+                                    <a href="/profile/{{ user['login'] }}">@{{ user['login'] }}</a>
+                                </td>
+                                <td class="username" onclick="rowClick(this);">{{ user['name'] }}</td>
+                                <td class="centered">
+                                    {% if user['type'] == 'accepted' %}
+                                        <button type="button" class="btn btn-xs btn-row btn-danger">Remove</button>
+                                    {% elif user['type'] == 'in' %}
+                                        <button type="button" class="btn btn-xs btn-row btn-danger">Remove</button>
+                                    {% elif user['type'] == 'out' %}
+                                        <button type="button" class="btn btn-xs btn-row btn-warning">Revoke</button>
+                                    {% else %}
+                                        {% if user['login'] == current_user %}
+                                            <button type="button" class="btn btn-xs btn-row btn-default">View</button>
+                                        {% else %}
+                                            <button type="button" class="btn btn-xs btn-row btn-success">Send</button>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        <tr><td id="notfound" colspan="4" class="centered" style="display:none;">No results found.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="/static/js/search.js"></script>
+    <script>
+        var currentUser='{{ current_user }}';
+        var pageOwner='{{ current_user }}';
+        var currentPage='{{ current_page }}';
+    </script>
+{% endblock scripts %}

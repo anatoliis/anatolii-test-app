@@ -1,0 +1,80 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    <title>Administration page</title>
+{% endblock title %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row main main-container">
+            {{ test_param }}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="main-header">Administration</h3>
+                        <span class="add-header">
+                            Total users registered: <span id="quantity">{{ users|length }}</span>
+                        </span>
+                    </div>
+                    <div class="panel-body">
+                        <label class="control-label">Administrators list:</label>
+                        <div class="well">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Login</th>
+                                        <th>Name</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for admin in admins %}
+                                    <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ admin['login'] }}</td>
+                                    <td>{{ admin['name'] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                        </div>
+                        <label class="control-label">Users list:</label>
+                        <table class="table table-bordered table-list">
+                            <thead>
+                            <tr>
+                                <th class="col-status">#</th>
+                                <th>Login</th>
+                                <th>Name</th>
+                                <th class="col-actions">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for user in users %}
+                                <tr class="highlighted" id="{{ user['login'] }}" >
+                                <td class="centered">{{ loop.index }}</td>
+                                <td class="login" onclick="rowClick(this);"><a href="/profile/{{ user['login'] }}">@{{ user['login'] }}</a></td>
+                                <td class="username" onclick="rowClick(this);">{{ user['name'] }}</td>
+                                <td class="col-actions">
+                                    {% if current_user == user['login'] %}
+                                        <button type="button" class="btn btn-xs btn-row btn-default">View</button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-xs btn-row btn-danger" style="width:100px;">Remove user</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        var currentPage='{{ current_page }}'
+    </script>
+{% endblock scripts %}
